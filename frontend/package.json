@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:production": "vite build --mode production",
+    "build:production": "vite build --mode production", 
     "preview": "vite preview",
     "serve": "vite preview",
     "lint": "echo 'Linting skipped'",
