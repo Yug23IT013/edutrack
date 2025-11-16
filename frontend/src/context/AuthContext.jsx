@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import SemesterSelectionModal from '../components/SemesterSelectionModal';
-import { API_BASE_URL } from '../config/api';
+import { API_BASE_URL, apiClient } from '../config/api';
 
 const AuthContext = createContext();
 
@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       getCurrentUser();
     } else {
       setLoading(false);
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }) => {
 
   const getCurrentUser = async () => {
     try {
-      const response = await axios.get('/api/users/profile');
+      const response = await apiClient.get('/api/auth/me');
       console.log('User profile loaded:', response.data);
       setUser(response.data);
       
@@ -80,6 +81,7 @@ export const AuthProvider = ({ children }) => {
       console.error('Get current user error:', error);
       localStorage.removeItem('token');
       delete axios.defaults.headers.common['Authorization'];
+      delete apiClient.defaults.headers.common['Authorization'];
     } finally {
       setLoading(false);
     }
@@ -87,11 +89,12 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (userData) => {
     try {
-      const response = await axios.post('/api/auth/signup', userData);
+      const response = await apiClient.post('/api/auth/signup', userData);
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
       
       // Store semester selection status in sessionStorage
@@ -115,11 +118,12 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await axios.post('/api/auth/login', credentials);
+      const response = await apiClient.post('/api/auth/login', credentials);
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
       
       // Store semester selection status in sessionStorage
@@ -145,6 +149,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     sessionStorage.removeItem('needsSemesterSelection');
     delete axios.defaults.headers.common['Authorization'];
+    delete apiClient.defaults.headers.common['Authorization'];
     setUser(null);
     setShowSemesterModal(false);
     
