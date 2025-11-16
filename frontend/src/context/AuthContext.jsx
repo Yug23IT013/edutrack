@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import SemesterSelectionModal from '../components/SemesterSelectionModal';
+import { API_BASE_URL } from '../config/api';
 
 const AuthContext = createContext();
 
@@ -19,6 +20,11 @@ export const AuthProvider = ({ children }) => {
 
   // Set up axios defaults
   useEffect(() => {
+    // Set base URL for axios
+    if (API_BASE_URL) {
+      axios.defaults.baseURL = API_BASE_URL;
+    }
+    
     const token = localStorage.getItem('token');
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
