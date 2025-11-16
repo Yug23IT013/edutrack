@@ -15,14 +15,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    minify: 'terser',
+    minify: 'esbuild', // Use esbuild (faster and included with Vite)
+    target: 'esnext',
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['lucide-react', 'react-hot-toast']
-        }
+        manualChunks: undefined // Let Vite handle chunking automatically
       }
     }
   },
